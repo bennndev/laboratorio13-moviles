@@ -32,6 +32,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainPreview() {
     Laboratorio13movilesTheme {
-        Ejercicio1Screen()
+        Ejercicio2Screen()
     }
 }
