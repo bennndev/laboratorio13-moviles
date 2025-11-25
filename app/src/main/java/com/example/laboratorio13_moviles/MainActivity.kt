@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Laboratorio13movilesTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Ejercicio1Screen(
+                    Ejercicio2Screen(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
