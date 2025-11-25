@@ -11,9 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.laboratorio13_moviles.ui.theme.Laboratorio13movilesTheme
 
 @Composable
 fun Ejercicio1Screen(modifier: Modifier = Modifier) {
@@ -46,16 +44,8 @@ fun Ejercicio1Screen(modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .size(150.dp)
-                    .background(Color(0xFF4CAF50))
+                    .background(Color(0xFF00BCD4))
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun Ejercicio1Preview() {
-    Laboratorio13movilesTheme {
-        Ejercicio1Screen()
     }
 }
