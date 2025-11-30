@@ -35,7 +35,12 @@ fun Ejercicio4Screen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        Text(
+            text = "Ejercicio 4: Benjamín Sullca",
+            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+            modifier = Modifier.padding(bottom = 24.dp)
+                .align(Alignment.CenterHorizontally)
+        )
         Button(onClick = {
             currentState = when (currentState) {
                 UiState.Cargando -> UiState.Contenido

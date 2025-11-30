@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Laboratorio13movilesTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Ejercicio2Screen(
+                    Ejercicio3Screen(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -32,6 +32,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainPreview() {
     Laboratorio13movilesTheme {
-        Ejercicio2Screen()
+        Ejercicio3Screen()
     }
 }

@@ -42,7 +42,12 @@ fun Ejercicio3Screen(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
+        Text(
+            text = "Ejercicio 3: Benjamín Sullca",
+            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+            modifier = Modifier.padding(bottom = 24.dp)
+                .align(Alignment.CenterHorizontally)
+        )
         Button(onClick = { moved = !moved }) {
             Text("Mover / Cambiar Tamaño")
         }
