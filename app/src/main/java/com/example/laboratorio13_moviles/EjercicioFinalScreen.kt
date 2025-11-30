@@ -1,11 +1,10 @@
 package com.example.laboratorio13_moviles
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.with
@@ -22,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
+// ESTADOS DEL DISPARO
 enum class ShootState {
     Listo,
     Disparando,
@@ -29,12 +29,14 @@ enum class ShootState {
     Fallo
 }
 
-@OptIn(ExperimentalAnimationApi::class) // ← REQUERIDO PARA AnimatedContent
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun EjercicioFinalScreen(modifier: Modifier = Modifier) {
 
     var shootState by remember { mutableStateOf(ShootState.Listo) }
     var score by remember { mutableStateOf(0) }
+    var attempts by remember { mutableStateOf(0) }
+    val maxAttempts = 5
 
     // 🎨 Color del campo según estado
     val fieldColor by animateColorAsState(
@@ -48,7 +50,6 @@ fun EjercicioFinalScreen(modifier: Modifier = Modifier) {
         label = "fieldColor"
     )
 
-    // ⚽ Animación de posición de la pelota
     val ballOffsetY by animateDpAsState(
         targetValue = when (shootState) {
             ShootState.Disparando, ShootState.Gol, ShootState.Fallo -> (-150).dp
@@ -58,30 +59,33 @@ fun EjercicioFinalScreen(modifier: Modifier = Modifier) {
         label = "ballOffsetY"
     )
 
-    // ⚽ Tamaño animado
     val ballSize by animateDpAsState(
         targetValue = if (shootState == ShootState.Listo) 48.dp else 32.dp,
         animationSpec = tween(700),
         label = "ballSize"
     )
 
-    // 🌀 LÓGICA DE DISPARO
+    // LÓGICA DE DISPARO
     LaunchedEffect(shootState) {
-        if (shootState == ShootState.Disparando) {
-            delay(700)
-
-            val esGol = Random.nextBoolean()
-            shootState = if (esGol) {
-                score++
-                ShootState.Gol
-            } else ShootState.Fallo
-
-            delay(900)
-            shootState = ShootState.Listo
+        when (shootState) {
+            ShootState.Disparando -> {
+                delay(700)
+                val esGol = Random.nextBoolean()
+                if (esGol) score++
+                shootState = if (esGol) ShootState.Gol else ShootState.Fallo
+            }
+            ShootState.Gol, ShootState.Fallo -> {
+                attempts++
+                delay(900)
+                if (attempts < maxAttempts) {
+                    shootState = ShootState.Listo
+                }
+            }
+            else -> Unit
         }
     }
 
-    // 🟩 LAYOUT PRINCIPAL
+    // LAYOUT PRINCIPAL
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -97,10 +101,12 @@ fun EjercicioFinalScreen(modifier: Modifier = Modifier) {
             Text(text = "Prototipo: Juego de Penales", color = Color.White)
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = "Puntaje: $score", color = Color.White)
+            Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+                Text(text = "Puntaje: $score", color = Color.White)
+                Text(text = "Intentos: $attempts/$maxAttempts", color = Color.White)
+            }
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 🌀 AnimatedContent corregido (incluye @OptIn)
             AnimatedContent(
                 targetState = shootState,
                 transitionSpec = {
@@ -117,11 +123,15 @@ fun EjercicioFinalScreen(modifier: Modifier = Modifier) {
                     ShootState.Fallo -> "¡Fallo! 😢"
                 }
 
-                Text(text = mensaje, color = Color.White)
+                if (attempts >= maxAttempts && state != ShootState.Disparando) {
+                    Text(text = "Juego Terminado - Puntaje Final: $score", color = Color.White)
+                } else {
+                    Text(text = mensaje, color = Color.White)
+                }
             }
         }
 
-        // ⚽ CANCHA
+        // CANCHA
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -138,7 +148,6 @@ fun EjercicioFinalScreen(modifier: Modifier = Modifier) {
                     .background(Color.White.copy(alpha = 0.25f))
             )
 
-            // ⚽ Pelota animada
             Box(
                 modifier = Modifier
                     .offset(y = ballOffsetY)
@@ -147,20 +156,26 @@ fun EjercicioFinalScreen(modifier: Modifier = Modifier) {
             )
         }
 
-        // Botón de disparo
+        // Botón de disparo / Reinicio
         Button(
             onClick = {
-                if (shootState == ShootState.Listo) {
+                if (attempts >= maxAttempts) {
+                    // Reiniciar juego
+                    score = 0
+                    attempts = 0
+                    shootState = ShootState.Listo
+                } else if (shootState == ShootState.Listo) {
                     shootState = ShootState.Disparando
                 }
             },
-            enabled = shootState == ShootState.Listo
+            enabled = shootState == ShootState.Listo || attempts >= maxAttempts
         ) {
             Text(
-                text = if (shootState == ShootState.Listo)
-                    "Patear al arco"
-                else
-                    "Esperando..."
+                text = when {
+                    attempts >= maxAttempts -> "Reiniciar Juego"
+                    shootState == ShootState.Listo -> "Patear al arco"
+                    else -> "Esperando..."
+                }
             )
         }
     }
